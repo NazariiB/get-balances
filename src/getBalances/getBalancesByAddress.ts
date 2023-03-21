@@ -7,7 +7,7 @@ import { ResponseInterface } from "../dto/ResponseDTO";
 import { TokenInterface } from "../dto/TokenDTO";
 import Moralis from "moralis";
 import { EvmChain } from "@moralisweb3/common-evm-utils";
-
+import { BigNumber } from 'bignumber.js';
 
 export async function getBalancesByAddress(address: string, network: string) {
     try {
@@ -22,23 +22,24 @@ export async function getBalancesByAddress(address: string, network: string) {
 
         for (const token of tokens as TokenInterface[]) {
             const tokenAddress = token.addresses[network];
-            
+
             const tokenPriceResult = await Moralis.EvmApi.token.getTokenPrice({
-                address: token.addresses["ethereum"],
+                address: token.addresses[network],
                 chain,
             });
-            const tokenPrice = tokenPriceResult.toJSON().usdPrice as number;
+            const tokenPrice = BigNumber(tokenPriceResult.toJSON().usdPrice);
 
             const contract = new web3.eth.Contract(contractAbi as AbiItem[], token.addresses[network]);
-            const tokenBalance = await contract.methods.balanceOf(address).call() as number;
+            const tokenBalance = BigNumber(await contract.methods.balanceOf(address).call());
+            const tokenDecimals = BigNumber(await contract.methods.decimals().call());
 
-            if (tokenBalance > 0) {
+            if (tokenBalance.comparedTo(0)) {
                 response.push({
                     tokenAddress: tokenAddress as string,
                     price: tokenPrice,
                     symbol: token.symbol,
                     name: token.token_name,
-                    balance: tokenBalance
+                    balance: BigNumber(tokenBalance.dividedBy(BigNumber(10).pow(tokenDecimals)).multipliedBy(tokenPrice).toFixed(2))
                 })
             }
         }
