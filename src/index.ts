@@ -3,9 +3,11 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import { tokenManageRouter } from "./routes/manageTokensInfo";
 import { getBalancesRouter } from "./routes/getBalances";
-import { registartionRouter } from "./routes/authentification";
+import { registartionRouter } from "./routes/registration";
 import secret from "./config.json";
 import Moralis from "moralis";
+import UserModel from "./models/UserModel";
+import bcrypt from "bcrypt";
 
 const app = express();
 
@@ -29,3 +31,9 @@ const start = async () => {
 }
 
 start();
+
+// email: "test@gmail.com"
+// password: "1234"
+
+// email: "test2@gmail.com"
+// password: "4321"

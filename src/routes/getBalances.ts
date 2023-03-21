@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getBalancesByAddress } from "../tokenScript/getBalancesByAddress";
+import { getBalancesByAddress } from "../getBalances/getBalancesByAddress";
 import Web3 from "web3";
 import secret from "../config.json";
 

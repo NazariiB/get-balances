@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { TokenInterface } from "../tokenScript/TokenInterface"
+import { TokenInterface } from "../dto/TokenDTO"
 
 const validateTokenData = (req: Request, res: Response, next: NextFunction): void => {
     try {

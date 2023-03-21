@@ -1,7 +1,7 @@
 import { Router } from "express";
-import TokenModel from "../tokenScript/TokenModel";
+import TokenModel from "../models/TokenModel";
 import { verifyJWT } from "../midleware/verifyJWT";
-import { TokenInterface } from "../tokenScript/TokenInterface";
+import { TokenInterface } from "../dto/TokenDTO";
 import { validateTokenData } from "../midleware/validateTokenData";
 
 const tokenManageRouter = Router();
