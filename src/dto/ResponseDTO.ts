@@ -1,9 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
-export interface ResponseInterface {
-    tokenAddress: string
+export interface ResponseDTO {
+    token_name: string
     price: BigNumber
-    symbol: string
-    name: string
     balance: BigNumber
 }

@@ -1,39 +1,30 @@
-import express from "express"
+import express, {Request} from "express"
+import { ApolloServer } from "apollo-server-express"
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import { tokenManageRouter } from "./routes/manageTokensInfo";
-import { getBalancesRouter } from "./routes/getBalances";
-import { registartionRouter } from "./routes/registration";
-import secret from "./config.json";
 import Moralis from "moralis";
-import UserModel from "./models/UserModel";
-import bcrypt from "bcrypt";
+import secret from "./config";
+import fs from "fs";
+import { resolvers } from "./resolver/resolver";
 
-const app = express();
+const main = async () => {
+    const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(tokenManageRouter)
-app.use(getBalancesRouter)
-app.use(registartionRouter)
+    await mongoose.connect(secret.mongodbUri);
+    await Moralis.start({
+        apiKey: secret.moralisApiKey,
+    });
 
-const start = async () => {
-    try {
-        await mongoose.connect(secret.mongodbUri);
-        await Moralis.start({
-            apiKey: secret.moralisApiKey,
-        });
-        app.listen(secret.port, () => console.log(`run on port ${secret.port} http://localhost:${secret.port}`));
-    } catch (error) {
-        console.log(error);
-    }
+    const typeDefs = fs.readFileSync("./src/schema/schemas.graphql", "utf8");
+    const context = ({req}: {req: Request}) => ({jwtToken: req.headers.authorization})
+    const apolloServer = new ApolloServer({typeDefs, resolvers, context})
+    await apolloServer.start()
+    apolloServer.applyMiddleware({app, path:"/graphql"})
+
+    app.listen(8084, () => console.log(`run on http://localhost:8084/`));
 }
 
-start();
-
-// email: "test@gmail.com"
-// password: "1234"
-
-// email: "test2@gmail.com"
-// password: "4321"
+main()

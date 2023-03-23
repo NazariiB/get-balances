@@ -1,4 +1,4 @@
-export interface TokenInterface {
+export interface TokenDTO {
     priority: number
     token_name: string
     decimals: number

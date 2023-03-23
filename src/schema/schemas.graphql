@@ -1,0 +1,46 @@
+type Query {
+    token: [Token!]
+    balances(address: String!, chain: String!): [Balances!] 
+}
+
+type Token {
+    priority: Int
+    token_name: ID!
+    decimals: Int
+    symbol: String 
+    addresses: [[String]]
+}
+
+type Balances {
+    token: Token!
+    price: Float
+    balance: Float
+}
+
+type Mutation {
+    addToken(input: AddTokenData!): Token
+    deleteToken(tokenName: ID!): Int
+    updateToken(input: UpdateTokenData!): Token
+    login(input: LoginInput!): String
+}
+
+input AddTokenData {
+    priority: Int!
+    token_name: ID!
+    decimals: Int!
+    symbol: String! 
+    addresses: [[String!]] 
+}
+
+input UpdateTokenData {
+    priority: Int
+    token_name: ID!
+    decimals: Int
+    symbol: String 
+    addresses: [[String!]] 
+}
+
+input LoginInput{
+    email: String!
+    password: String!
+}
